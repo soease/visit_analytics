@@ -13,11 +13,11 @@ type Config struct {
 		Password string
 	}
 	DB struct {
-		Username string
-		Password string
-		Port     int64
-		Host     string
-		DBName   string `yaml:"dbname"`
+		//Username string //- Ease 2018.11.23 改为sqlite3数据库
+		//Password string //- Ease 2018.11.23 改为sqlite3数据库
+		//Port     int64  //- Ease 2018.11.23 改为sqlite3数据库
+		//Host     string //- Ease 2018.11.23 改为sqlite3数据库
+		DBName string `yaml:"dbname"`
 	} `yaml:"db"`
 	DeployHost string `yaml:"deploy_host"`
 	RunAt      string `yaml:"run_at"`

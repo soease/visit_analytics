@@ -13,17 +13,14 @@ var (
 )
 
 func main() {
-
-	// parse config.yaml
-	config := GetConfig()
+	config := GetConfig() // parse config.yaml
 	if len(os.Args) != 2 {
-		fmt.Fprintln(os.Stderr, "error parameters num. Usage: ./visit_analytics config.yaml")
+		fmt.Fprintln(os.Stderr, "用法错误：./visit_analytics config.yaml")
 		os.Exit(1)
 	}
 	config.parse(os.Args[1])
 
-	// init database
-	InitDB()
+	InitDB() // init database
 
 	// generateRandomRecords() // for generate fake daily_record
 
@@ -33,12 +30,12 @@ func main() {
 	router.GET("/analytics.js", func(c *gin.Context) {
 		go analyse(c)
 		c.Header("Content-Type", "application/javascript")
-		c.String(http.StatusOK, "console.log(\"https://github.com/nladuo/visit_analytics\")")
+		c.String(http.StatusOK, "console.log(\"网站统计系统\")")
 	})
 
 	// for testing
-	router.StaticFile("/test", "./www/test.html")
-	router.StaticFile("/test2", "./www/test.html")
+	//router.StaticFile("/test", "./www/test.html")
+	//router.StaticFile("/test2", "./www/test.html")
 
 	// for web displaying
 	MakeRoutes(router)
@@ -56,13 +53,12 @@ func main() {
 
 // record according to Request.Referer()
 func analyse(c *gin.Context) {
-	referer := TrimUrl(c.Request.Referer())
-	host_name := GetHostName(referer)
+	referer := TrimUrl(c.Request.Referer()) //过滤/和/?符号
+	host_name := GetHostName(referer)       //获取主机名
 	if len(referer) == 0 || host_name == "" {
 		return
 	}
-
-	title := GetTitle(referer)
+	title := GetTitle(referer) //获取网站标题
 
 	visit_chan <- Visit{
 		ClientIp:  c.ClientIP(),

@@ -1,5 +1,5 @@
 # visit_analytics
-自用的网站访问量统计工具
+网站访问量统计工具,现已改为sqlite3版。
 
 ## 截图
 ### 总访问量
@@ -16,9 +16,7 @@ make prepare 		# 下载库文件
 ```
 
 ### 创建数据库
-``` sql
-CREATE DATABASE IF NOT EXISTS `visit_analytics` DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
-```
+自动创建
 
 ### 配置文件
 打开config,yaml, 配置mysql与访问密码。
@@ -27,11 +25,7 @@ manage:
   username: nladuo
   password: nladuo
 db:
-  username: root
-  password: root
-  port: 3306
-  host: localhost
-  dbname: visit_analytics
+  dbname: visit_analytics.db
 deploy_host: localhost:3000
 run_at: :3000
 ```

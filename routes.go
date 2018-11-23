@@ -58,9 +58,9 @@ func apiGetRecords(c *gin.Context) {
 		return
 	}
 
-	if _type == "0" {
+	if _type == "0" { //按月查询
 		showResponse(c, 0, "success", searchDailyRecords(url, tm))
-	} else if _type == "1" {
+	} else if _type == "1" { //按年查询
 		showResponse(c, 0, "success", searchMonthlyRecords(url, tm))
 	} else {
 		showResponse(c, 1, "error paramers", "")

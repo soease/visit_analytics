@@ -1,41 +1,45 @@
 package main
 
 import (
+	//"fmt"
 	"math/rand"
 	"strconv"
 	"time"
 )
 
+// 添加一个主机记录
 func recordHost(visit Visit) {
 	var count int
 	db := GetDB()
 	db.Model(&Host{}).Where("host_name = ?", visit.Host).Count(&count)
-	if count == 0 {
+	if count == 0 { //不存在此主机，则添加
 		db.Create(&Host{HostName: visit.Host})
 	}
 }
 
+// 添加访问页记录
 func recordPage(visit Visit) {
 	var page Page
 	db.Where("url = ?", visit.Referer).Find(&page)
-	if page.TotalCount == 0 {
+	if page.TotalCount == 0 { //不存在此页面记录，则添加
 		db.Create(&Page{
 			Host:       visit.Host,
 			Url:        visit.Referer,
 			Title:      visit.Title,
 			TotalCount: 1,
 		})
-	} else { // count plus one
+	} else { // 存在页面记录则+1
 		page.TotalCount += 1
 		db.Save(&page)
 	}
 }
 
+// 详细的访问记录：本日
 func recordDailyRecord(visit Visit) {
 	var daily_record DailyRecord
 	today := time.Now().Format("2006-01-02")
 
-	db.Where("url = ? && date = ?", visit.Referer, today).Find(&daily_record)
+	db.Where("url = ? and date = ?", visit.Referer, today).Find(&daily_record)
 	if daily_record.Id == 0 {
 		db.Create(&DailyRecord{
 			Url:       visit.Referer,
@@ -49,11 +53,12 @@ func recordDailyRecord(visit Visit) {
 	}
 }
 
+// 详细的访问记录：本月
 func recordMonthlyRecord(visit Visit) {
 	var monthly_record MonthlyRecord
 	this_month := time.Now().Format("2006-01")
 
-	db.Where("url = ? && date = ?", visit.Referer, this_month).Find(&monthly_record)
+	db.Where("url = ? and date = ?", visit.Referer, this_month).Find(&monthly_record)
 	if monthly_record.Id == 0 {
 		db.Create(&MonthlyRecord{
 			Url:       visit.Referer,
@@ -108,7 +113,7 @@ func searchDailyRecords(url string, tm time.Time) []DailyRecord {
 	last_month := tm.AddDate(0, -1, -1)
 
 	db := GetDB()
-	db.Order("time_stamp asc").Where("url = ? && time_stamp <= ? && time_stamp >= ?",
+	db.Order("time_stamp asc").Where("url = ? and time_stamp <= ? and time_stamp >= ?",
 		url, tomorrow.Unix(), last_month.Unix()).Find(&dayly_records)
 
 	return dayly_records
@@ -122,7 +127,7 @@ func searchMonthlyRecords(url string, tm time.Time) []MonthlyRecord {
 
 	db := GetDB()
 
-	db.Order("time_stamp asc").Where("url = ? && time_stamp <= ? && time_stamp >= ?",
+	db.Order("time_stamp asc").Where("url = ? and time_stamp <= ? and time_stamp >= ?",
 		url, tomorrow.Unix(), last_year.Unix()).Find(&monthly_records)
 
 	return monthly_records

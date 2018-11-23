@@ -1,10 +1,10 @@
 package main
 
 import (
-	"strconv"
-
-	_ "github.com/Go-SQL-Driver/MySQL"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite" //+ Ease 2018.11.23 改为sqlite3数据库
+	//_ "github.com/Go-SQL-Driver/MySQL" //- Ease 2018.11.23 改为sqlite3数据库
+	//"strconv" //- Ease 2018.11.23 改为sqlite3数据库
 )
 
 var db *gorm.DB
@@ -36,10 +36,12 @@ func InitDB() {
 func connectDB() error {
 	config := GetConfig()
 	var err error
-	db, err = gorm.Open("mysql", config.DB.Username+":"+config.DB.Password+
-		"@tcp("+config.DB.Host+":"+strconv.FormatInt(config.DB.Port, 10)+")/"+
-		config.DB.DBName+"?charset=utf8&parseTime=True")
 
+	//db, err = gorm.Open("mysql", config.DB.Username+":"+config.DB.Password+
+	//	"@tcp("+config.DB.Host+":"+strconv.FormatInt(config.DB.Port, 10)+")/"+
+	//	config.DB.DBName+"?charset=utf8&parseTime=True")
+
+	db, err = gorm.Open("sqlite3", config.DB.DBName)
 	return err
 }
 
